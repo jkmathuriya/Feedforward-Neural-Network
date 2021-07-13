@@ -58,34 +58,60 @@ def predict(X,theta1,theta2):
 ## Cross validation and accuracy 
 def accuracy(actual,predicted):
     return (np.sum(actual==predicted)/len(actual))*100
-      
-## train network
+
+## Splitting Data into train and test 80% for training and 20% for testing
+def split(X,y):
+    m=len(y)
+    test_X=[]
+    test_y=[]
+    seed(6)
+    for i in range(int(m*.2)):
+        temp=randrange(0,m-i);
+        test_X.append(X[temp,:])
+        X=np.delete(X,temp,axis=0)
+        test_y.append(y[temp])
+        y=np.delete(y,temp)
+    
+    train_X=X;
+    train_y=y;
+    test_y=np.array(test_y)
+    test_X=np.array(test_X)
+    return train_X,train_y,test_X,test_y
      
 # load data
-fileName='seeds_dataset.csv'  ## edit your file name here
-X=[];
-y=[];
-with open(fileName) as file_csv:
-    file=reader(file_csv,delimiter=',');
-    for row in file:
-        temp=list(map(float,row[0:-1]));
-        temp.insert(0,1)
-        y.append(int(row[-1]));
-        X.append(temp);
-X=np.array(X)
-y=np.array(y)
-y=y-1;
+def loadData(fileName):
+    X=[];
+    y=[];
+    with open(fileName) as file_csv:
+        file=reader(file_csv,delimiter=',');
+        for row in file:
+            temp=list(map(float,row[0:-1]));
+            temp.insert(0,1)
+            y.append(int(row[-1]));
+            X.append(temp);
+    X=np.array(X)
+    y=np.array(y)
+    y=y-1;
+    return X,y
 
 # Noramalize data
-minm=np.min(X[:,1:],0)
-maxm=np.max(X[:,1:],0)
-X[:,1:]=np.divide((X[:,1:]-minm),(maxm-minm));
+def normalize(X):
+    minm=np.min(X[:,1:],0)
+    maxm=np.max(X[:,1:],0)
+    X[:,1:]=np.divide((X[:,1:]-minm),(maxm-minm));
+    return X
 
 ## set the parameters
 alpha=0.03;
 n_hidden=5;
 epoch=8600;
-lamda=1;        
+lamda=1;    
+
+## load data
+fileName='seeds_dataset.csv'  ## edit your file name here
+X,y=loadData(fileName)
+X=normalize(X);
+train_X,train_y,test_X,test_y=split(X,y);
  
 ## Initialize Weights 
 n_input=X.shape[1]
@@ -94,25 +120,10 @@ np.random.seed(6); ## Weight matrix will be same for each run
 theta1=np.random.rand(n_input,n_hidden); #Weight matrix from input layer to hidden layer
 theta2=np.random.rand(n_hidden+1,n_outputs); # Weigth matrix from hidden layer to output layer
 
-## Splitting Data into train and test 80% for training and 20% for testing
-m=len(y)
-test_X=[]
-test_y=[]
-seed(6)
-for i in range(int(m*.2)):
-    temp=randrange(0,m-i);
-    test_X.append(X[temp,:])
-    X=np.delete(X,temp,axis=0)
-    test_y.append(y[temp])
-    y=np.delete(y,temp)
-    
-train_X=X;
-train_y=y;
-test_y=np.array(test_y)
-test_X=np.array(test_X)
+
     
 
-## Training Network
+## Training Network with backpropagation
 m=len(train_y)
 iterr=list(range(m))
 shuffle(iterr)
