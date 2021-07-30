@@ -1,2 +1,15 @@
-# Feedforward-Neural-Network
-I have implemented a feedforward Neural Network with Backpropagation algorithm using logistic cost function.
+# Feedforward-Neural-Network from scratch
+
+1. Logistic Cost function Regularized
+2. Full Batch Training with Regularized gradient 
+3. Dataset 3 Class classification problem
+4. sigmoid fucntion on hidden layer and output layer
+5. Single Hidden Layer
+
+# Library
+1. numpy
+2. random
+
+# Accuracy
+# 97.62% 
+
